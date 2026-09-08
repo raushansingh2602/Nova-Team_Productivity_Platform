@@ -1,4 +1,5 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL = rawApiUrl.endsWith("/") ? rawApiUrl.slice(0, -1) : rawApiUrl;
 
 export const fetchWithAuth = async (endpoint: string, options: RequestInit = {}) => {
   const token = localStorage.getItem("token");
@@ -9,7 +10,8 @@ export const fetchWithAuth = async (endpoint: string, options: RequestInit = {})
   }
   headers.set("Content-Type", "application/json");
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  const formattedEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const response = await fetch(`${API_URL}${formattedEndpoint}`, {
     ...options,
     headers,
   });
